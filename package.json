@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "dependencies": {
+    "@emulatorjs/core-fbneo": "4.2.3",
+    "@emulatorjs/emulatorjs": "4.2.3"
+  }
+}

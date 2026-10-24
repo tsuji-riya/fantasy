@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fantasy Zone</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: #eee; font-family: system-ui, sans-serif; }
+  #game { width: 100%; height: 100%; }
+  #pick { max-width: 32rem; margin: 0 auto; padding: 2rem 16px; line-height: 1.7; }
+  #pick label { display: inline-block; margin-top: 1rem; padding: .6rem 1.2rem; background: #f5c400; color: #000; border-radius: .4rem; cursor: pointer; font-weight: bold; }
+  #pick input { display: none; }
+  #reset { position: fixed; top: 4px; right: 8px; z-index: 10; color: #888; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="pick" hidden>
+  <h1>Fantasy Zone</h1>
+  <p>手元の MAME 用 ROM <code>fantzone.zip</code> を選ぶと遊べます。ROM はこのブラウザの中 (IndexedDB) にだけ保存され、サーバーには送られません。次からは開くだけで始まります。</p>
+  <p>キーボード: ←↑↓→ 移動 / Z ショット / X ボム / V コイン / Enter スタート。スマホは画面のパッドで操作できます。</p>
+  <label>fantzone.zip を選ぶ<input type="file" accept=".zip"></label>
+</div>
+<a id="reset" href="#" hidden>ROM を選び直す</a>
+<div id="game"></div>
+<script>
+  // ROM は配信できないので、利用者が選んだファイルをブラウザ内にだけ持つ
+  const db = new Promise((resolve, reject) => {
+    const req = indexedDB.open("fantasy", 1);
+    req.onupgradeneeded = () => req.result.createObjectStore("rom");
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  const store = async (mode, fn) => {
+    const tx = (await db).transaction("rom", mode);
+    const req = fn(tx.objectStore("rom"));
+    return new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve(req.result);
+      tx.onerror = () => reject(tx.error);
+    });
+  };
+
+  function start(blob) {
+    document.getElementById("pick").hidden = true;
+    document.getElementById("reset").hidden = false;
+    window.EJS_player = "#game";
+    window.EJS_core = "fbneo";
+    window.EJS_pathtodata = "data/";
+    window.EJS_gameName = "fantzone";
+    // FBNeo は zip のファイル名でゲームを判別する
+    window.EJS_gameUrl = new File([blob], "fantzone.zip");
+    const s = document.createElement("script");
+    s.src = "data/loader.js";
+    document.body.append(s);
+  }
+
+  document.querySelector("#pick input").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    await store("readwrite", (s) => s.put(file, "fantzone"));
+    start(file);
+  });
+  document.getElementById("reset").addEventListener("click", async (e) => {
+    e.preventDefault();
+    await store("readwrite", (s) => s.delete("fantzone"));
+    location.reload();
+  });
+
+  store("readonly", (s) => s.get("fantzone")).then((rom) => {
+    if (rom) start(rom);
+    else document.getElementById("pick").hidden = false;
+  });
+</script>
+</body>
+</html>
