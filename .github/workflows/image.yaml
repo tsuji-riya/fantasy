@@ -1,6 +1,6 @@
 name: image
 
-# main に push するたびに ghcr.io/tsuji-riya/fantasy:1.0.<実行番号> を作る。
+# main に push するたびに ghcr.io/tsuji-riya/fantasy.riya.work:1.0.<実行番号> を作る。
 # lab 側は Dependabot がこのタグを見つけて更新 PR を出す
 on:
   push:
