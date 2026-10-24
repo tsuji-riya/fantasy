@@ -1,10 +1,10 @@
 name: image
 
-# v1.2.3 のタグを push すると ghcr.io/tsuji-riya/fantasy:1.2.3 を作る。
+# main に push するたびに ghcr.io/tsuji-riya/fantasy:1.0.<実行番号> を作る。
 # lab 側は Dependabot がこのタグを見つけて更新 PR を出す
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
   pull_request:
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
-          tags: type=semver,pattern={{version}}
+          tags: type=raw,value=1.0.${{ github.run_number }}
       - uses: docker/build-push-action@v6
         with:
           context: .

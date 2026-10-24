@@ -29,7 +29,7 @@ http://localhost:8080 を開きます。
 
 ## リリース
 
-`v1.2.3` の形式でタグを push すると GitHub Actions が `ghcr.io/tsuji-riya/fantasy:1.2.3` (amd64 / arm64) を作ります。
+main に push するたびに GitHub Actions が `ghcr.io/tsuji-riya/fantasy:1.0.<実行番号>` (amd64 / arm64) を作ります。
 デプロイは [tsuji-riya/lab](https://github.com/tsuji-riya/lab) の `apps/fantasy/` で行い、新しいタグは lab の Dependabot が更新 PR にします。
 
 ## ライセンス
