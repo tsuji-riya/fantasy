@@ -1,5 +1,5 @@
 # ファイルを集めるだけなので、ビルド機のアーキテクチャで動かす (arm64 用でも QEMU 不要)
-FROM --platform=$BUILDPLATFORM node:22-alpine AS build
+FROM --platform=$BUILDPLATFORM node:25-alpine AS build
 WORKDIR /src
 COPY package.json package-lock.json ./
 # 全コア入りの @emulatorjs/cores は数百 MB あるので入れず、FBNeo だけ使う
