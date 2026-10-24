@@ -28,7 +28,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: type=raw,value=1.0.${{ github.run_number }}
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: .
           # クラスタにミニ PC (amd64) と Raspberry Pi (arm64) が混ざっている
