@@ -46,6 +46,15 @@
     window.EJS_core = "fbneo";
     window.EJS_pathtodata = "data/";
     window.EJS_gameName = "fantzone";
+    // 設定メニューで別コアを選ぶと次回以降そちらが優先され、Fantasy Zone が動かなくなるので消す
+    try {
+      const key = "ejs-1-arcade-fantzone-settings";
+      const saved = JSON.parse(localStorage.getItem(key));
+      if (saved?.settings?.retroarch_core) {
+        delete saved.settings.retroarch_core;
+        localStorage.setItem(key, JSON.stringify(saved));
+      }
+    } catch (e) {}
     // FBNeo は zip のファイル名でゲームを判別する
     window.EJS_gameUrl = new File([blob], "fantzone.zip");
     const s = document.createElement("script");
